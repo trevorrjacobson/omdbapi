@@ -5,25 +5,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kalam">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
     <title>Movies</title>
     <style>
         .flex {
             display: flex;
             flex-flow: row wrap;
-            justify-content: center;
         }
         
         .flexLeft {
-            min-height: 100px;
-            flex-basis: 25%;
-            background-color: aqua;
-            justify-content: center;
+            min-height: 200px;
+            flex-basis: 100%;
+            font-size: larger;
         }
         
         .flexRight {
+            display: flex;
+            flex-wrap: row wrap;
             min-height: 100px;
-            flex-basis: 75%;
-            background-color: rebeccapurple;
+            flex-basis: 100%;
+            font-size: xx-large;
         }
         
         form {
@@ -32,12 +35,9 @@
         }
         
         body {
-            background-color: peachpuff;
-        }
-        
-        .flex33 {
-            flex-basis: 33%;
-            background-color: whitesmoke;
+            background-color: black;
+            color: yellow;
+            font-family: "Kalam", cursive;
         }
         
         .flex100 {
@@ -48,19 +48,69 @@
             text-align: center;
             justify-content: center;
         }
+        
+        img {
+            width: 60%;
+        }
+        
+        movieInfo {
+            flex-basis: 45%;
+        }
+        
+        @media (min-width: 576px) {
+            .flexLeft {
+                flex-basis: calc(40% - 6px);
+                height: 100%;
+            }
+            .flexRight {
+                flex-basis: calc(60% - 6px);
+                height: 100%
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .flexLeft {
+                flex-basis: calc(35% - 6px);
+                height: 100%;
+            }
+            .flexRight {
+                flex-basis: calc(65% - 6px);
+                height: 100%
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .flexLeft {
+                flex-basis: calc(30% - 6px);
+                height: 100%;
+            }
+            .flexRight {
+                flex-basis: calc(70% - 6px);
+                height: 100%
+            }
+            .error {
+                color: red;
+            }
+        }
+        
+        h1 {
+            font-size: 400%;
+        }
+        
+        h2 {
+            width: 100%;
+        }
     </style>
 </head>
 
 <body>
-    <h1 style="text-align: center;">Movie Information</h1>
-
+    <h1 id="top" style="text-align: center;">Movie and Game Information</h1>
     <div class="flex">
         <div class="flexLeft">
-
             <form>
-                <label for="firstName">Movie Title</label>
+                <label for="firstName">Movie or Game Title</label>
 
-                <input id="userTitle" placeholder="Input Movie Title" />
+                <input id="userTitle" placeholder="Input Title" />
             </form>
             <form>
                 <div>
@@ -68,11 +118,15 @@
                     <label for="series">Series</label>
                 </div>
                 <div>
-                    <input type="radio" id="movie" checked="checked" name="type" value="Movie">
+                    <input type="radio" id="movie" name="type" value="Movie">
                     <label for="movie">Movie</label>
                 </div>
                 <div>
-                    <input type="radio" id="any" name="type" value="">
+                    <input type="radio" id="game" name="type" value="Game">
+                    <label for="game">Game</label>
+                </div>
+                <div>
+                    <input type="radio" id="any" checked="checked" name="type" value="">
                     <label for="any">Any of the Above</label>
                 </div>
             </form>
@@ -164,57 +218,67 @@
                     <option class = "option" value="2021">2021</option>
                 </select>
             </form>
-
-            <button id="search">Search</button>
-
+            <button type="button" class="btn btn-warning" id="search">Search</button>
         </div>
         <div class="flexRight">
-            <div id="info">
-
-            </div>
-            <div class="flex100" id="poster">
-
+            <div class="flex100" id="info">
             </div>
         </div>
+        <h2 id="totalResults"></h2>
+        <div><a href="#top" id="backTop" title="Back To Top">Back To Top</a></div>
+
     </div>
     <script>
         document.getElementById('search').addEventListener("click", function() {
-                let year = document.getElementById("year").value;
-                let title = document.getElementById("userTitle").value;
-                let type;
-                const radios = document.getElementsByName("type");
-                for (var radio of radios) {
-                    if (radio.checked) {
-                        type = radio.value;
-                        console.log(type);
-                    }
+            let year = document.getElementById("year").value;
+            let title = document.getElementById("userTitle").value;
+            let type;
+            const radios = document.getElementsByName("type");
+            for (var radio of radios) {
+                if (radio.checked) {
+                    type = radio.value;
+                    console.log(type);
                 }
+            }
+            if (title.length > 2) {
                 fetch('http://www.omdbapi.com/?i=tt3896198&apikey=28e35861' + "&s=" + JSON.stringify(title) + "&y=" + year + "&type=" + type)
                     .then(function(response) {
-                        if (!response.ok) {
-                            console.log(response.status);
-                        }
                         return response.json();
 
                     })
                     .then(function(res) {
-                        console.log(res);
-                        document.getElementById("info").innerText = ""
-                        for (i = 0; i < res.Search.length; i++) {
-                            let newDiv = document.createElement("div");
-                            let newContent = document.createTextNode(res.Search[i].Title + " " + res.Search[i].Year + " " + res.Search[i].Type);
-                            newDiv.appendChild(newContent);
-                            document.getElementById("info").appendChild(newDiv);
+                        if (res.Error != "Movie not found!") {
+                            console.log(res);
+                            document.getElementById("info").innerText = ""
+                            for (i = 0; i < res.Search.length; i++) {
 
+                                let newDiv = document.createElement("div");
+                                let newContent = document.createTextNode(res.Search[i].Title + " " + res.Search[i].Year + " " + res.Search[i].Type);
+                                let poster = res.Search[i].Poster;
+                                let img = document.createElement("img");
+                                let linebr = document.createElement("br");
+                                img.src = poster;
+                                img.title = "movie poster (broken image link)"
+                                newDiv.appendChild(newContent);
+                                newDiv.appendChild(linebr);
+                                newDiv.appendChild(img);
+                                document.getElementById("info").appendChild(newDiv);
+                                newDiv.classList.add("movieInfo")
+                                info.classList.remove("error");
+                                document.getElementById("totalResults").innerText = "There Were " + res.totalResults + " Total Results Found";
 
+                            }
+
+                        } else {
+                            document.getElementById("info").innerText = "Nothing Found With This Title";
+                            info.classList.add("error");
                         }
-
                     })
+            } else {
+                document.getElementById("info").innerText = "ERROR: Please Enter At Least 3 Letters Into The Title Box";
+                info.classList.add("error");
             }
-
-        )
-
-        //
+        })
     </script>
 </body>
 
