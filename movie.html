@@ -34,6 +34,20 @@
         body {
             background-color: peachpuff;
         }
+        
+        .flex33 {
+            flex-basis: 33%;
+            background-color: whitesmoke;
+        }
+        
+        .flex100 {
+            flex-basis: 100%;
+        }
+        
+        div {
+            text-align: center;
+            justify-content: center;
+        }
     </style>
 </head>
 
@@ -58,7 +72,7 @@
                     <label for="movie">Movie</label>
                 </div>
                 <div>
-                    <input type="radio" id="any" name="type" value="Any">
+                    <input type="radio" id="any" name="type" value="">
                     <label for="any">Any of the Above</label>
                 </div>
             </form>
@@ -155,46 +169,46 @@
 
         </div>
         <div class="flexRight">
+            <div id="info">
 
+            </div>
+            <div class="flex100" id="poster">
+
+            </div>
         </div>
     </div>
     <script>
         document.getElementById('search').addEventListener("click", function() {
-            let year = document.getElementById("year").value;
-            let title = document.getElementById("userTitle").value;
-            let type;
-            const radios = document.getElementsByName("type");
-            for (var radio of radios) {
-                if (radio.checked) {
-                    type = radio.value;
-                    console.log(type);
+                let year = document.getElementById("year").value;
+                let title = document.getElementById("userTitle").value;
+                let type;
+                const radios = document.getElementsByName("type");
+                for (var radio of radios) {
+                    if (radio.checked) {
+                        type = radio.value;
+                        console.log(type);
+                    }
                 }
-            }
-            if (type != "Any") {
-                fetch('http://www.omdbapi.com/?i=tt3896198&apikey=28e35861' + "&s=" + JSON.stringify(title) + "&y=" + year + "&type=" + JSON.stringify(type))
+                fetch('http://www.omdbapi.com/?i=tt3896198&apikey=28e35861' + "&s=" + JSON.stringify(title) + "&y=" + year + "&type=" + type)
                     .then(function(response) {
                         if (!response.ok) {
                             console.log(response.status);
                         }
                         return response.json();
+
                     })
                     .then(function(res) {
                         console.log(res);
-                    })
-            } else {
-                fetch('http://www.omdbapi.com/?i=tt3896198&apikey=28e35861' + "&s=" + JSON.stringify(title) + "&y=" + year)
-                    .then(function(response) {
-                        if (!response.ok) {
-                            console.log(response.status);
+                        document.getElementById("info").innerText = ""
+                        for (i = 0; i < res.Search.length; i++) {
+                            document.getElementById("info").innerText += "  " + res.Search[i].Title + "  " + res.Search[i].Year + "  " + res.Search[i].Type;
                         }
-                        return response.json();
-                    })
-                    .then(function(res) {
-                        console.log(res);
                     })
             }
 
-        })
+        )
+
+        //
     </script>
 </body>
 
