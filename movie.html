@@ -201,8 +201,14 @@
                         console.log(res);
                         document.getElementById("info").innerText = ""
                         for (i = 0; i < res.Search.length; i++) {
-                            document.getElementById("info").innerText += "  " + res.Search[i].Title + "  " + res.Search[i].Year + "  " + res.Search[i].Type;
+                            let newDiv = document.createElement("div");
+                            let newContent = document.createTextNode(res.Search[i].Title + " " + res.Search[i].Year + " " + res.Search[i].Type);
+                            newDiv.appendChild(newContent);
+                            document.getElementById("info").appendChild(newDiv);
+
+
                         }
+
                     })
             }
 
