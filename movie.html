@@ -272,11 +272,15 @@
                         } else {
                             document.getElementById("info").innerText = "Nothing Found With This Title";
                             info.classList.add("error");
+                            document.getElementById("totalResults").innerText = "There Were 0 Total Results Found";
+
                         }
                     })
             } else {
                 document.getElementById("info").innerText = "ERROR: Please Enter At Least 3 Letters Into The Title Box";
                 info.classList.add("error");
+                document.getElementById("totalResults").innerText = "There Were 0 Total Results Found";
+
             }
         })
     </script>
